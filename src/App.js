@@ -10,9 +10,7 @@ import AppNavbar from './components/AppNavbar';
 import Login from './pages/Login';
 import Register from './pages/Register'
 import Logout from './pages/Logout';
-import Home from './pages/Home';
 import Workouts from './pages/Workouts';
-import AddWorkout from './pages/AddWorkout';
 import Error from './pages/Error';
 
 import './App.css';
@@ -31,7 +29,7 @@ function App() {
     };
 
     useEffect(() => {
-        fetch(`https://fitnessapp-api-ln8u.onrender.com/users/details`, {
+        fetch(`https://fitnessapi-calingasan.onrender.com/users/details`, {
         headers: {
             Authorization: `Bearer ${ localStorage.getItem('token') }`
         }
@@ -75,7 +73,6 @@ function App() {
                 <Route path="/logout" element={<Logout />} />
                 <Route path="/register" element={<Register />} />
                 <Route path="/workouts" element={<Workouts />} />
-                <Route path="/addWorkout" element={<AddWorkout />} />
                 <Route path="*" element={<Error />} />
               </Routes>
             </Container>
