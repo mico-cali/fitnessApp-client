@@ -26,7 +26,7 @@ export default function AddWorkout() {
 
     let token = localStorage.getItem('token');
 
-    fetch(`https://fitnessapp-api-ln8u.onrender.com/workouts/addWorkout`, {
+    fetch(`https://fitnessapi-calingasan.onrender.com/workouts/addWorkout`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

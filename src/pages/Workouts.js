@@ -17,7 +17,7 @@ export default function Workouts() {
     const [success, setSuccess] = useState('');
 
     const fetchWorkouts = () => {
-        fetch('https://fitnessapp-api-ln8u.onrender.com/workouts/getMyWorkouts', {
+        fetch('https://fitnessapi-calingasan.onrender.com/workouts/getMyWorkouts', {
             headers: { 
                 Authorization: `Bearer ${localStorage.getItem('token')}` 
             }
@@ -32,7 +32,7 @@ export default function Workouts() {
     const createWorkout = (e) => {
         e.preventDefault();
         if (!name.trim() || !duration.trim()) return setError('All fields are required');
-        fetch('https://fitnessapp-api-ln8u.onrender.com/workouts/addWorkout', {
+        fetch('https://fitnessapi-calingasan.onrender.com/workouts/addWorkout', {
             method: 'POST', 
             headers: { 
                 'Content-Type': 'application/json', 
@@ -51,7 +51,7 @@ export default function Workouts() {
 
     const updateWorkout = (e) => {
         e.preventDefault();
-        fetch(`https://fitnessapp-api-ln8u.onrender.com/workouts/updateWorkout/${selectedWorkout._id}`, {
+        fetch(`https://fitnessapi-calingasan.onrender.com/workouts/updateWorkout/${selectedWorkout._id}`, {
             method: 'PATCH', 
             headers: { 
                 'Content-Type': 'application/json', 
@@ -65,7 +65,7 @@ export default function Workouts() {
     };
 
     const deleteWorkout = (id) => {
-        fetch(`https://fitnessapp-api-ln8u.onrender.com/workouts/deleteWorkout/${id}`, {
+        fetch(`https://fitnessapi-calingasan.onrender.com/workouts/deleteWorkout/${id}`, {
             method: 'DELETE', 
             headers: { 
                 Authorization: `Bearer ${localStorage.getItem('token')}` 
