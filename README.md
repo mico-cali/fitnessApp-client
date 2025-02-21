@@ -1,70 +1,83 @@
-# Getting Started with Create React App
+# FitTrack
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+FitTrack is a full-stack fitness tracking application that allows users to log, edit, and delete their workout sessions. Each user can only see their own workout data after logging in.
 
-## Available Scripts
+## Features
 
-In the project directory, you can run:
+- User authentication (Login & Signup)
+- Add workouts with name and duration
+- Edit and delete your workouts
+- View only your personal workout history
+- Secure and private data access per user
 
-### `npm start`
+## Tech Stack
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+- **Frontend:** React.js
+- **Backend:** Node.js, Express.js
+- **Database:** MongoDB with Mongoose
+- **Authentication:** JWT (JSON Web Token)
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Installation
 
-### `npm test`
+1. Clone the repository:
+   ```sh
+   git clone https://github.com/yourusername/FitTrack.git
+   cd FitTrack
+   ```
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+2. Install dependencies:
+   ```sh
+   npm install
+   ```
 
-### `npm run build`
+3. Set up environment variables in a `.env` file:
+   ```sh
+   MONGO_URI=your_mongodb_connection_string
+   JWT_SECRET=your_jwt_secret
+   ```
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+4. Start the backend server:
+   ```sh
+   npm run server
+   ```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+5. Navigate to the frontend folder and install dependencies:
+   ```sh
+   cd client
+   npm install
+   ```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+6. Start the frontend:
+   ```sh
+   npm start
+   ```
 
-### `npm run eject`
+## Sample Login Credentials
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+Use the following sample email to log in and test the application:
+```plaintext
+Email: testuser@example.com
+Password: password123
+```
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## API Endpoints
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+### Authentication
+- `POST /api/auth/signup` - Register a new user
+- `POST /api/auth/login` - Log in and get a token
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+### Workouts
+- `GET /api/workouts` - Get all workouts for logged-in user
+- `POST /api/workouts` - Add a new workout
+- `PUT /api/workouts/:id` - Update a workout
+- `DELETE /api/workouts/:id` - Delete a workout
 
-## Learn More
+## Contributing
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## License
 
-### Code Splitting
+This project is licensed under the MIT License.
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
