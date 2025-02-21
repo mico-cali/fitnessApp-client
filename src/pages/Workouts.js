@@ -17,14 +17,33 @@ export default function Workouts() {
     const [success, setSuccess] = useState('');
 
     const fetchWorkouts = () => {
+        const token = localStorage.getItem('token');
+        
+        if (!token) {
+            console.error("No token found, skipping fetch.");
+            return;
+        }
+
         fetch('https://fitnessapi-calingasan.onrender.com/workouts/getMyWorkouts', {
             headers: { 
-                Authorization: `Bearer ${localStorage.getItem('token')}` 
+                Authorization: `Bearer ${token}` 
             }
         })
         .then(response => response.json())
-        .then(data => setWorkouts(Array.isArray(data) ? data : data.workouts || []))
-        .catch(() => setWorkouts([]));
+        .then(data => {
+            console.log("Fetch data:", data);
+
+            if (data.auth === "Failed") {
+                console.error("Authentication failed:", data.message);
+                setWorkouts([]);
+            } else {
+                setWorkouts(Array.isArray(data) ? data : data.workouts || []);
+            }
+        })
+        .catch(error => {
+            console.error("Error fetching workouts:", error);
+            setWorkouts([]);
+        });
     };
 
     useEffect(() => { if (user) fetchWorkouts(); }, [user]);
@@ -32,44 +51,69 @@ export default function Workouts() {
     const createWorkout = (e) => {
         e.preventDefault();
         if (!name.trim() || !duration.trim()) return setError('All fields are required');
+        
+        const token = localStorage.getItem('token');
+        if (!token) {
+            setError('User not authenticated');
+            return;
+        }
+
         fetch('https://fitnessapi-calingasan.onrender.com/workouts/addWorkout', {
             method: 'POST', 
             headers: { 
                 'Content-Type': 'application/json', 
-                'Authorization': `Bearer ${localStorage.getItem('token')}` 
+                'Authorization': `Bearer ${token}` 
             },
-            body: JSON.stringify({ 
-                name, 
-                duration 
-            }),
-        }).then(() => { setShowModal(false); fetchWorkouts(); setSuccess('Workout added!'); setError(''); });
+            body: JSON.stringify({ name, duration }),
+        }).then(() => { 
+            setShowModal(false); 
+            fetchWorkouts(); 
+            setSuccess('Workout added!'); 
+            setError('');
+            setName('');
+            setDuration('');
+        });
     };
 
     const openUpdateModal = (workout) => {
-        setSelectedWorkout(workout); setName(workout.name); setDuration(workout.duration); setShowUpdateModal(true);
+        setSelectedWorkout(workout);
+        setName(workout.name);
+        setDuration(workout.duration);
+        setShowUpdateModal(true);
     };
 
     const updateWorkout = (e) => {
         e.preventDefault();
+        const token = localStorage.getItem('token');
+        if (!token) {
+            setError('User not authenticated');
+            return;
+        }
+
         fetch(`https://fitnessapi-calingasan.onrender.com/workouts/updateWorkout/${selectedWorkout._id}`, {
-            method: 'PATCH', 
+            method: 'PUT', 
             headers: { 
                 'Content-Type': 'application/json', 
-                'Authorization': `Bearer ${localStorage.getItem('token')}` 
+                'Authorization': `Bearer ${token}` 
             },
-            body: JSON.stringify({ 
-                name, 
-                duration 
-            }),
-        }).then(() => { setShowUpdateModal(false); fetchWorkouts(); setSuccess('Workout updated!'); });
+            body: JSON.stringify({ name, duration }),
+        }).then(() => { 
+            setShowUpdateModal(false); 
+            fetchWorkouts(); 
+            setSuccess('Workout updated!'); 
+            setError('');
+            setName('');
+            setDuration('');
+        });
     };
 
     const deleteWorkout = (id) => {
+        const token = localStorage.getItem('token');
+        if (!token) return;
+
         fetch(`https://fitnessapi-calingasan.onrender.com/workouts/deleteWorkout/${id}`, {
             method: 'DELETE', 
-            headers: { 
-                Authorization: `Bearer ${localStorage.getItem('token')}` 
-            }
+            headers: { Authorization: `Bearer ${token}` }
         }).then(() => fetchWorkouts());
     };
 
@@ -94,6 +138,7 @@ export default function Workouts() {
                     </Col>
                 </Row>
             ) : (
+                <>
                 <Row>
                     <Col md={12}>
                         <div className="d-flex align-items-center justify-content-between">
@@ -117,44 +162,50 @@ export default function Workouts() {
                         </div>
                     </Col>
                 </Row>
+
+                {/* Add Workout Modal */}
+                <Modal show={showModal} onHide={() => setShowModal(false)}>
+                    <Modal.Header closeButton>
+                        <Modal.Title>Add Workout</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        {error && <Alert variant="danger">{error}</Alert>}
+                        <Form onSubmit={createWorkout}>
+                            <Form.Group>
+                                <Form.Label>Name</Form.Label>
+                                <Form.Control value={name} onChange={e => setName(e.target.value)} required />
+                            </Form.Group>
+                            <Form.Group className="mt-2">
+                                <Form.Label>Duration (mins)</Form.Label>
+                                <Form.Control type="number" value={duration} onChange={e => setDuration(e.target.value)} required />
+                            </Form.Group>
+                            <Button type="submit" className="mt-3" variant="primary">Save</Button>
+                        </Form>
+                    </Modal.Body>
+                </Modal>
+
+                {/* Edit Workout Modal */}
+                <Modal show={showUpdateModal} onHide={() => setShowUpdateModal(false)}>
+                    <Modal.Header closeButton>
+                        <Modal.Title>Edit Workout</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        {error && <Alert variant="danger">{error}</Alert>}
+                        <Form onSubmit={updateWorkout}>
+                            <Form.Group>
+                                <Form.Label>Name</Form.Label>
+                                <Form.Control value={name} onChange={e => setName(e.target.value)} required />
+                            </Form.Group>
+                            <Form.Group className="mt-2">
+                                <Form.Label>Duration (mins)</Form.Label>
+                                <Form.Control type="number" value={duration} onChange={e => setDuration(e.target.value)} required />
+                            </Form.Group>
+                            <Button type="submit" className="mt-3" variant="primary">Update</Button>
+                        </Form>
+                    </Modal.Body>
+                </Modal>
+                </>
             )}
-
-            {/* Add Workout Modal */}
-            <Modal show={showModal} onHide={() => setShowModal(false)}>
-                <Modal.Header closeButton><Modal.Title>Add Workout</Modal.Title></Modal.Header>
-                <Modal.Body>
-                    {error && <Alert variant="danger">{error}</Alert>}
-                    <Form onSubmit={createWorkout}>
-                        <Form.Group>
-                            <Form.Label>Name</Form.Label>
-                            <Form.Control value={name} onChange={e => setName(e.target.value)} required />
-                        </Form.Group>
-                        <Form.Group className="mt-2">
-                            <Form.Label>Duration (mins)</Form.Label>
-                            <Form.Control type="number" value={duration} onChange={e => setDuration(e.target.value)} required />
-                        </Form.Group>
-                        <Button type="submit" className="mt-3" variant="primary">Save</Button>
-                    </Form>
-                </Modal.Body>
-            </Modal>
-
-            {/* Edit Workout Modal */}
-            <Modal show={showUpdateModal} onHide={() => setShowUpdateModal(false)}>
-                <Modal.Header closeButton><Modal.Title>Edit Workout</Modal.Title></Modal.Header>
-                <Modal.Body>
-                    <Form onSubmit={updateWorkout}>
-                        <Form.Group>
-                            <Form.Label>Name</Form.Label>
-                            <Form.Control value={name} onChange={e => setName(e.target.value)} required />
-                        </Form.Group>
-                        <Form.Group className="mt-2">
-                            <Form.Label>Duration (mins)</Form.Label>
-                            <Form.Control type="number" value={duration} onChange={e => setDuration(e.target.value)} required />
-                        </Form.Group>
-                        <Button type="submit" className="mt-3" variant="primary">Update</Button>
-                    </Form>
-                </Modal.Body>
-            </Modal>
         </Container>
     );
 }
