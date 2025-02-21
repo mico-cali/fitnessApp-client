@@ -2,6 +2,14 @@
 
 FitTrack is a full-stack fitness tracking application that allows users to log, edit, and delete their workout sessions. Each user can only see their own workout data after logging in.
 
+## Example User Account
+
+Use the following credentials to explore the application:
+
+**User Account:**
+- Email: `test@mail.com`
+- Password: `password123`
+
 ## Features
 
 - User authentication (Login & Signup)
