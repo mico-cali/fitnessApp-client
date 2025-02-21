@@ -10,9 +10,12 @@ import AppNavbar from './components/AppNavbar';
 import Login from './pages/Login';
 import Register from './pages/Register'
 import Logout from './pages/Logout';
+import Home from './pages/Home';
 import Workouts from './pages/Workouts';
 import AddWorkout from './pages/AddWorkout';
-import Profile from './pages/Profile';
+import Error from './pages/Error';
+
+import './App.css';
 
 function App() {
 
@@ -71,10 +74,9 @@ function App() {
                 <Route path="/login" element={<Login />} />
                 <Route path="/logout" element={<Logout />} />
                 <Route path="/register" element={<Register />} />
+                <Route path="/workouts" element={<Workouts />} />
                 <Route path="/addWorkout" element={<AddWorkout />} />
-                <Route path="/profile" element={<Profile />} />
-
-                {/*<Route path="*" element={<Error />} />*/}
+                <Route path="*" element={<Error />} />
               </Routes>
             </Container>
           </Router>

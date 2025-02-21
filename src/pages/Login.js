@@ -7,6 +7,8 @@ import UserContext from '../context/UserContext';
 
 export default function Login() {
     const notyf = new Notyf();
+    const navigate = useNavigate();
+
     const { user, setUser } = useContext(UserContext);
 
     // State hooks to store the values of the input fields
@@ -22,6 +24,7 @@ export default function Login() {
 
         // Prevents page redirection via form submission
         e.preventDefault();
+
         fetch('https://fitnessapp-api-ln8u.onrender.com/users/login', {
             method: 'POST',
             headers: {
@@ -34,16 +37,28 @@ export default function Login() {
 
             })
         })
-        .then(res => res.json())
+        .then(response => {
+            if (!response.ok) {
+                return response.json().then(errorData => { // Get error details
+                    console.error("API Error:", response.status, errorData);
+                    const errorMessage = errorData.message || 'Login failed. Check console for details.';
+                    notyf.error(`Login failed: ${response.status} - ${errorMessage}`);
+                    throw new Error(errorMessage);
+                });
+            }
+            return response.json(); // Proceed if response is ok
+        })
         .then(data => {
+            // Test
+             console.log('Login Success Data:', data);
 
-            if(data.access !== undefined){
+            // if(data.access !== undefined){
+            if(data && data.access){
 
-                console.log(data.access);
+                console.log("Token: ",data.access);
 
                 // Set the token of the authenticated user in the local storage
                 // Syntax
-                // localStorage.setItem('propertyName', value);
                 localStorage.setItem('token', data.access);
                 retrieveUserDetails(data.access);
 
@@ -53,23 +68,23 @@ export default function Login() {
 
                 notyf.success('Successful Login');
 
-            } else if (data.message === "Incorrect email or password") {
-
-                notyf.error('Incorrect Credentials. Try Again');
-
-            } else {
-
-                notyf.error('User Not Found. Try Again.');
-
+                // navigate to home after successful login
+                navigate("/");
+            } 
+            else {
+              console.error("Unexpected data format:", data);
+              const errorMessage = data?.message || "Login failed: Unexpected data format from the server.";
+              notyf.error(errorMessage); // Display error from backend if available
             }
         })
-
+        .catch(error => {
+            console.error("Login Error:", error);
+            notyf.error(error.message || "An error occurred during login.");
+        });
     }
 
     function retrieveUserDetails(token){
             
-        // The token will be sent as part of the request's header information
-        // We put "Bearer" in front of the token to follow implementation standards for JWTs
         fetch('https://fitnessapp-api-ln8u.onrender.com/users/details', {
             headers: {
                 Authorization: `Bearer ${ token }`
@@ -78,9 +93,8 @@ export default function Login() {
         .then(res => res.json())
         .then(data => {
 
-            console.log(data);
-
-            // Changes the global "user" state to store the "id" and the "isAdmin" property of the user which will be used for validation across the whole application
+            console.log("User Details: ", data);
+            
             setUser({
               id: data._id,
               isAdmin: data.isAdmin
@@ -102,18 +116,19 @@ export default function Login() {
     }, [email, password]);
 
     return (
-        // (user.id !== null) ?
-        //     // If user is logged in
-        //     <Navigate to = "/" />
-        // :
-        <Container className="my-4">
+        (user.id !== null) ?
+            // If user is logged in
+            <Navigate to = "/" />
+        :
+        <Container className="my-4 pt-3">
             <Row className="justify-content-md-center">
                 <Col md={6}>
-                    <Card className="shadow">
+                    <Card className="shadow rounded-3 border-0">
                         <Card.Body className="p-4"> 
                         <h2 className="mb-4 text-center">Login</h2>
-                            <Form onSubmit={(e) => authenticate(e)}>
-                                <Form.Group className="mb-4" controlId="email">
+                            {/*<Form onSubmit={(e) => authenticate(e)}>*/}
+                            <Form onSubmit={authenticate}>
+                                <Form.Group className="mb-2" controlId="email">
                                     <Form.Label>Email address</Form.Label>
                                     <Form.Control
                                         type="email"
@@ -121,11 +136,11 @@ export default function Login() {
                                         required
                                         value={email}
                                         onChange={(e) => setEmail(e.target.value)}
-                                        className="form-control-lg"
+                                        className="form-control"
                                     />
                                 </Form.Group>
 
-                                <Form.Group className="mb-5" controlId="password">
+                                <Form.Group className="mb-4" controlId="password">
                                     <Form.Label>Password</Form.Label>
                                     <Form.Control
                                         type="password"
@@ -133,19 +148,19 @@ export default function Login() {
                                         required
                                         value={password}
                                         onChange={(e) => setPassword(e.target.value)}
-                                        className="form-control-lg"
+                                        className="form-control"
                                     />
                                 </Form.Group>
 
                                 {/*Buttons*/}
                                 <div className="d-grid gap-2 mb-4"> 
                                 {isActive ? (
-                                    <Button variant="primary" type="submit" id="submitBtn" size="lg">
-                                      Submit
+                                    <Button variant="primary" type="submit" id="loginBtn">
+                                      Login
                                     </Button>
                                 ) : (
-                                    <Button variant="danger" type="submit" id="submitBtn" disabled size="lg">
-                                      Submit
+                                    <Button variant="danger" type="submit" id="loginBtn" disabled>
+                                      Login
                                     </Button>
                                 )}
                                 </div>

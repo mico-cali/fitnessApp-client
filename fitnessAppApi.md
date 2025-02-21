@@ -22,7 +22,7 @@
 
     {
         "email": "sample@mail.com",
-        "password": "samplePw123"
+        "password": "sample123"
     }
 
     ```
@@ -35,7 +35,7 @@
 
     {
         "email": "sample@mail.com",
-        "password": "samplePw123"
+        "password": "sample123"
     }
 
     ```

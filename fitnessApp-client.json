@@ -1,0 +1,8 @@
+{
+    "url": "https://fitness-app-client-micocalis-projects.vercel.app/",
+    "endpoints": {
+        "register": "/register",
+        "login": "/login",
+        "workouts": "/workouts"
+    }
+}
